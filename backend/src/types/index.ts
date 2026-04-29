@@ -45,8 +45,8 @@ export interface ChatMessage {
 export interface BoardConfig {
   totalSteps: number;
   safePositions: number[];
-  homeStartPositions: Map<PlayerColor, number>;
-  baseStartPositions: Map<PlayerColor, number>;
+  homeStartPositions: Record<PlayerColor, number>;
+  baseStartPositions: Record<PlayerColor, number>;
   homeTrackLength: number;
 }
 

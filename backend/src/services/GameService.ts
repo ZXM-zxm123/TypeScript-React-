@@ -461,8 +461,8 @@ export class GameService {
       players: playersArray,
       pieces: piecesArray,
       status: room.status,
-      currentPlayerId: room.currentPlayerId,
-      currentDiceValue: room.currentDiceValue,
+      currentPlayerId: game?.getCurrentPlayerId() ?? room.currentPlayerId,
+      currentDiceValue: game?.getCurrentDiceValue() ?? room.currentDiceValue,
       chatMessages: room.chatMessages,
       maxPlayers: room.maxPlayers,
       boardConfig: game?.getBoardConfig() || null
