@@ -55,4 +55,5 @@ export interface MoveResult {
   capturedPieces: Piece[];
   movedPiece: Piece | null;
   canRollAgain: boolean;
+  errorMessage: string | null;
 }

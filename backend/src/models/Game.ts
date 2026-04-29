@@ -234,7 +234,8 @@ export class Game {
         success: false,
         capturedPieces: [],
         movedPiece: null,
-        canRollAgain: false
+        canRollAgain: false,
+        errorMessage: '玩家或棋子不存在'
       };
     }
     
@@ -243,17 +244,65 @@ export class Game {
         success: false,
         capturedPieces: [],
         movedPiece: null,
-        canRollAgain: false
+        canRollAgain: false,
+        errorMessage: '该棋子不属于你'
       };
     }
     
-    const movablePieces = this.getMovablePieces(playerId, diceValue);
-    if (!movablePieces.some(p => p.id === pieceId)) {
+    if (piece.isAtFinish) {
       return {
         success: false,
         capturedPieces: [],
         movedPiece: null,
-        canRollAgain: false
+        canRollAgain: false,
+        errorMessage: '该棋子已到达终点'
+      };
+    }
+    
+    if (piece.isAtBase) {
+      if (diceValue !== 6) {
+        return {
+          success: false,
+          capturedPieces: [],
+          movedPiece: null,
+          canRollAgain: false,
+          errorMessage: '需要掷出 6 点才能起飞'
+        };
+      }
+    }
+    
+    const movablePieces = this.getMovablePieces(playerId, diceValue);
+    if (!movablePieces.some(p => p.id === pieceId)) {
+      let errorMsg = '无法移动该棋子';
+      
+      if (piece.isAtBase) {
+        errorMsg = '需要掷出 6 点才能起飞';
+      } else if (piece.isOnHomeTrack) {
+        const newHomeTrackPos = piece.position + diceValue;
+        if (newHomeTrackPos > this.boardConfig.homeTrackLength) {
+          errorMsg = '骰子点数过大，无法移动到终点';
+        }
+      } else {
+        const homeStartPos = this.boardConfig.homeStartPositions.get(player.color)!;
+        let distanceToHomeStart = homeStartPos - piece.position;
+        if (distanceToHomeStart < 0) {
+          distanceToHomeStart += this.boardConfig.totalSteps;
+        }
+        
+        if (distanceToHomeStart <= diceValue) {
+          const remainingSteps = diceValue - distanceToHomeStart;
+          if (remainingSteps > this.boardConfig.homeTrackLength) {
+            errorMsg = '骰子点数过大，无法移动到终点';
+          }
+        }
+      }
+      
+      return {
+        success: false,
+        capturedPieces: [],
+        movedPiece: null,
+        canRollAgain: false,
+        errorMessage: errorMsg
       };
     }
 
@@ -308,7 +357,8 @@ export class Game {
       success: true,
       capturedPieces,
       movedPiece: piece,
-      canRollAgain
+      canRollAgain,
+      errorMessage: null
     };
   }
 
