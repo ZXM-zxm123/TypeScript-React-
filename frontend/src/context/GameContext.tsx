@@ -109,25 +109,10 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       movablePieceIds: string[];
     }) => {
       setMovablePieceIds(data.movablePieceIds);
-      setRoom(prev => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          currentDiceValue: data.diceValue
-        };
-      });
     });
 
     newSocket.on('turnChanged', (data: { currentPlayerId: string }) => {
       setMovablePieceIds([]);
-      setRoom(prev => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          currentPlayerId: data.currentPlayerId,
-          currentDiceValue: null
-        };
-      });
     });
 
     newSocket.on('piecesCaptured', (data: { capturedPieces: any[] }) => {

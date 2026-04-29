@@ -318,7 +318,8 @@ export class GameService {
     const result = game.movePiece(socket.id, data.pieceId, room.currentDiceValue);
     
     if (!result.success) {
-      socket.emit('error', { message: '无法移动该棋子' });
+      const errorMessage = result.errorMessage || '无法移动该棋子';
+      socket.emit('error', { message: errorMessage });
       this.startAutoRollTimer(mapping.roomId);
       return;
     }
@@ -460,8 +461,8 @@ export class GameService {
       players: playersArray,
       pieces: piecesArray,
       status: room.status,
-      currentPlayerId: room.currentPlayerId,
-      currentDiceValue: room.currentDiceValue,
+      currentPlayerId: game?.getCurrentPlayerId() ?? room.currentPlayerId,
+      currentDiceValue: game?.getCurrentDiceValue() ?? room.currentDiceValue,
       chatMessages: room.chatMessages,
       maxPlayers: room.maxPlayers,
       boardConfig: game?.getBoardConfig() || null
